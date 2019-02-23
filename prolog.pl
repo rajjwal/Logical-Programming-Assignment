@@ -48,3 +48,117 @@ sum-up-numbers-general([H|T], N):-
 	sum-up-numbers-general(T, SUM),
 	%we add the first element
 	N is H + SUM.
+
+
+
+
+
+
+%PROBLEM 3
+
+%get-min-list function is a helper function which gives the minimum number in the list
+%number-list function is a helper function that takes the list and returns the list with only numbers
+%min-above-min-helper is a helper function that returns a list with all numbers less than the min element in L2.
+%min-above-min returns the min value that the function min-above-min-helper returns.
+
+%get-min-list
+
+%base case
+get-min-list([A], A).
+
+get-min-list([A|B], M):-
+	%if first element not number, recursively call the function with rest of the elements in the list
+	not(number(A)),
+	get-min-list(B, M).
+
+get-min-list([A,B|Z], M):-
+	%if second element is not number, recursively call the function with first and rest of the elements in the list
+	not(number(B)),
+	get-min-list([A|Z], M).
+
+get-min-list([A,B|Z], M):-
+	%if first and second number are numbers, and first element is less than or equal to second
+	%remove second element and call the function recursively with first and rest of the elements in the list
+	number(A),
+	number(B),
+	A =< B,
+	get-min-list([A|Z], M).
+
+get-min-list([A,B|Z], M):-
+	%if first and second number are numbers, and first element is less than or equal to second
+	%removes first element and call the function with rest of the elements in the list
+	number(A),
+	number(B),
+	A > B,
+	get-min-list([B|Z], M).
+
+%number-list : Function that adds only numeric values to list
+
+%base case
+number-list([],[]).
+
+number-list(L, LIST) :-
+	%if the first element is not number, recursively call the function with rest of the elements in the list
+	[A | B] = L,
+	not(number(A)),
+	number-list(B, LIST).
+
+number-list([A|B], [A|LIST]):- 
+	%if first element is number-list, add the first element to the LIST and recursively call the function with rest of the elements
+	%[A|LIST] adds the A to lists.
+	number(A),
+	number-list(B, LIST).
+
+
+%min-above-min-helper: Adds values less than min of L2 to a list.
+
+%base case
+min-above-min-helper([],_,[]). 
+
+min-above-min-helper(L, M2, Z):- 
+	%if number in L1 is less than min of L2, recursively call the function with rest of the elements
+	[A | B] = L,
+	A =< M2,
+	min-above-min-helper(B, M2, Z).
+
+min-above-min-helper([A|B], M2, [A|Z]):-  
+	%if L1 is greater than min of L2, recursively call the function with rest of the elements
+	%[A | Z] adds A to Z
+	min-above-min-helper(B, M2, Z).
+
+
+%min-above-min: 
+
+min-above-min(L1, _, N):- 
+	%if there is no number in list L1
+	get-min-list(L1, M1),
+	not(number(M1)),
+	get-min-list(L1,N).
+
+min-above-min(L1, _, N):-  
+	%if the list1 is empty
+	length(L1,0),
+	get-min-list(L1,N).
+
+min-above-min(L1, L2, N):-   
+	%if the list2 is empty
+	length(L2,0),
+	get-min-list(L1, N).
+
+min-above-min(L1, L2, N):- 
+	%if there is no number in list l2, return the min element of L1.
+	get-min-list(L2, M2),
+	not(number(M2)),
+	get-min-list(L1,N).
+
+
+min-above-min(L1, L2, N):-
+	%Get all numeric value in list 1.
+	%Get the minimum value in list 2.
+	%Store all values greater than min of L2 in list Z.
+	%return min of Z.
+	number-list(L1, List1),
+	get-min-list(L2, M2),
+	min-above-min-helper(List1, M2, Z),
+	get-min-list(Z, N).
+
