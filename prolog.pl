@@ -162,3 +162,67 @@ min-above-min(L1, L2, N):-
 	min-above-min-helper(List1, M2, Z),
 	get-min-list(Z, N).
 
+
+
+
+
+% PROBLEM 4
+
+%make-nested-list-simple-helper function is a helper function that makes nested list into a simple list
+%common-unique-elements-helper is a helper function that uses member function to see if the first element of L1 is a member of L2. If yes, append it to a new list and the new list with N.
+%common-unique-elements uses helper functions to see if N is an element of L1 and L2
+
+%make-nested-list-simple-helper
+
+%base case
+make-nested-list-simple-helper([],[]).
+
+%makes nested list simple: condition,
+make-nested-list-simple-helper(L, Lists):-
+	%if the first element of L1 is a list, make lists2 having the elements from the list 
+	% and list1 having the elements from the remamining part, and append both lists2 and lists1.
+	[X1 | Y1] = L,
+	is_list(X1),
+	make-nested-list-simple-helper(X1, Lists2),
+	make-nested-list-simple-helper(Y1, Lists1),
+	append(Lists2, Lists1, Lists). %append both lists2 and list1
+
+make-nested-list-simple-helper(L, Lists):-
+	%if the first element of L1 is not a list, add the element to Lists and recursively call the function with rest of the elements
+	[X1 | Y1] = L,
+	not(is_list(X1)),
+	make-nested-list-simple-helper(Y1, Lists1),
+	append([X1], Lists1, Lists).  %add the element to Lists
+
+
+%common-unique-elements-helper
+
+%base case
+common-unique-elements-helper([],_,[]).
+
+common-unique-elements-helper(Lists1, Lists2, N):-
+    %if the first element of L1 is a member of L1, add it to X1 and call function again.
+	[X1 | Y1] = Lists1,
+	member(X1, Lists2),
+	common-unique-elements-helper(Y1, Lists2, N1),
+	append([X1], N1, N ).
+
+common-unique-elements-helper(Lists1, Lists2, N):-
+    %if not a member of L1, call the function recursively with rest of the elements of Lists1
+	[X1 | Y1] = Lists1,
+	not(member(X1, Lists2)),
+	common-unique-elements-helper(Y1, Lists2, N).
+
+
+%common-unique-elements
+
+common-unique-elements([],_,[]).
+
+common-unique-elements(L1, L2, N):-
+    %make list1 and list2 simple and then call the helper function.
+	make-nested-list-simple-helper(L1, Lists1),
+	make-nested-list-simple-helper(L2, Lists2),
+	common-unique-elements-helper(Lists1, Lists2, N).
+
+
+
